@@ -17,16 +17,31 @@ int main(void) {
   struct Node *list = NULL;
 
   push_front(&list, 10);
-  push_front(&list, 20);
-  push_front(&list, 30);
-  push_front(&list, 40);
-  
-  print_list(list);
 
   int pop_value;
   if (list_pop_back(&list, &pop_value))
-    printf("You pop out: %d", pop_value);
+    printf("You pop out: %d\n", pop_value);
 
+  print_list(list);
+
+  struct Node *list_2 = NULL;
+
+
+  push_front(&list_2, 10);
+  push_front(&list_2, 20);
+  push_front(&list_2, 30);
+  push_front(&list_2, 40);
+
+  if (list_pop_back(&list_2, &pop_value))
+    printf("You pop out: %d\n", pop_value);
+  if (list_pop_back(&list_2, &pop_value))
+    printf("You pop out: %d\n", pop_value);
+  if (list_pop_back(&list_2, &pop_value))
+    printf("You pop out: %d\n", pop_value);
+  
+  print_list(list_2);
+
+  destroy_list(list_2);
   destroy_list(list);
 
   return 0;
@@ -37,9 +52,7 @@ void push_front(struct Node **list, int value) {
 
   if (new_node != NULL) {
     new_node->value = value;
-    new_node->next = NULL;
-    
-    new_node->next = (*list);
+    new_node->next = *list;
     *list = new_node;
   } else
     printf("Cannot allocate the node.\n");
@@ -74,5 +87,24 @@ size_t list_size(const struct Node *list) {
 }
 
 bool list_pop_back(struct Node **head, int *out_value) {
+  if (*head == NULL)
+    return false;
 
+  if ((*head)->next == NULL) {
+    *out_value = (*head)->value;
+    free(*head);
+    *head = NULL;
+    return true;
+  }
+
+  struct Node *current = *head;
+
+  while (current->next->next != NULL)
+    current = current->next;
+
+  *out_value = current->next->value;
+  free(current->next);
+  current->next = NULL;
+
+  return true;
 }
