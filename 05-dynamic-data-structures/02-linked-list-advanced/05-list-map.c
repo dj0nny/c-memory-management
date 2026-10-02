@@ -8,35 +8,37 @@ struct Node {
 };
 
 struct Node *create_node(int value);
-void list_deallocate(struct Node *head);
-void list_print(const struct Node *head);
 
+int double_value(int value);
 bool push_back(struct Node **head, int value);
-bool list_set(struct Node *head, size_t index, int value);
+
+void map_list(struct Node *head, int (*map_value)(int));
+void print_list(const struct Node *head);
+void clear_list(struct Node **head);
 
 int main(void) {
   struct Node *list = NULL;
 
+  push_back(&list, 5);
   push_back(&list, 10);
+  push_back(&list, 15);
   push_back(&list, 20);
+  push_back(&list, 25);
   push_back(&list, 30);
-  push_back(&list, 40);
-  push_back(&list, 50);
 
-  if (list_set(list, 2, 25))
-    printf("Value changed.\n");
-  else
-    printf("Failed to change the value.\n");
+  print_list(list);
 
-  if (list_set(list, 49, 25))
-    printf("Value changed.\n");
-  else
-    printf("Failed to change the value.\n");
+  map_list(list, double_value);
 
-  list_print(list);
-  list_deallocate(list);
+  print_list(list);
+
+  clear_list(&list);
 
   return 0;
+}
+
+int double_value(int value) {
+  return value * 2;
 }
 
 struct Node *create_node(int value) {
@@ -51,21 +53,11 @@ struct Node *create_node(int value) {
   return new_node;
 }
 
-void list_deallocate(struct Node *head) {
+void map_list(struct Node *head, int (*map_value)(int)) {
   while (head != NULL) {
-    struct Node *next = head->next;
-    free(head);
+    head->value = map_value(head->value);
     head = head->next;
   }
-}
-
-void list_print(const struct Node *head) {
-  while (head != NULL) {
-    printf("%d -> ", head->value);
-    head = head->next;
-  }
-
-  printf("NULL\n");
 }
 
 bool push_back(struct Node **head, int value) {
@@ -76,6 +68,7 @@ bool push_back(struct Node **head, int value) {
 
   if (*head == NULL) {
     *head = new_node;
+
     return true;
   }
 
@@ -87,18 +80,22 @@ bool push_back(struct Node **head, int value) {
   current->next = new_node;
 
   return true;
+
 }
 
-bool list_set(struct Node *head, size_t index, int value) {
-  while (index > 0 && head != NULL) {
-    --index;
+void print_list(const struct Node *head) {
+  while (head != NULL) {
+    printf("%d -> ", head->value);
     head = head->next;
   }
 
-  if (head == NULL)
-    return false;
+  printf("NULL\n");
+}
 
-  head->value = value;
-
-  return true;
+void clear_list(struct Node **head) {
+  while (*head != NULL) {
+    struct Node *next = (*head)->next;
+    free(*head);
+    *head = next;
+  }
 }

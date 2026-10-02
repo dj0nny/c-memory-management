@@ -7,49 +7,35 @@ struct Node {
   struct Node *next;
 };
 
-struct Node *create_node(int value);
 bool push_back(struct Node **head, int value);
 
-void print_list(const struct Node *head);
-void destroy_list(struct Node *head);
+struct Node *create_node(int value);
+struct Node *move_list(struct Node **head);
 
-const struct Node *list_find_last(const struct Node *head, int value);
+void print_list(const struct Node *head);
+void clear_list(struct Node **head);
 
 int main(void) {
   struct Node *list = NULL;
-
+  
   push_back(&list, 10);
   push_back(&list, 20);
   push_back(&list, 30);
-  push_back(&list, 10);
+  push_back(&list, 40);
   push_back(&list, 50);
-  push_back(&list, 10);
   push_back(&list, 60);
-
-  int searched_value = 10;
-  const struct Node *last_node_with_value = list_find_last(list, 10);
-  if (last_node_with_value != NULL)
-    printf("The address of the last node with value %d is %p.\n", searched_value, &last_node_with_value);
-  else
-    printf("Operation failed.\n");
+  push_back(&list, 70);
+  push_back(&list, 80);
 
   print_list(list);
-  destroy_list(list);
+  
+  struct Node *new_list = move_list(&list);
+  print_list(new_list);
+
+  clear_list(&new_list);
+  clear_list(&list);
 
   return 0;
-}
-
-const struct Node *list_find_last(const struct Node *head, int value) {
-  const struct Node *last_found_node = NULL;
-  
-  while (head != NULL) {
-    if (head->value == value)
-      last_found_node = head;
-    
-    head = head->next;
-  }
-
-  return last_found_node;
 }
 
 struct Node *create_node(int value) {
@@ -64,19 +50,26 @@ struct Node *create_node(int value) {
   return new_node;
 }
 
+struct Node *move_list(struct Node **head) {
+  struct Node *temp_head = *head;
+  *head = NULL;
+
+  return temp_head;
+}
+
 bool push_back(struct Node **head, int value) {
   struct Node *new_node = create_node(value);
 
   if (new_node == NULL)
-    return NULL;
+    return false;
 
   if (*head == NULL) {
     *head = new_node;
-    
+
     return true;
   }
 
-  struct Node *current = *head;
+  struct Node *current = (*head);
 
   while (current->next != NULL)
     current = current->next;
@@ -85,6 +78,7 @@ bool push_back(struct Node **head, int value) {
 
   return true;
 }
+
 
 void print_list(const struct Node *head) {
   while (head != NULL) {
@@ -95,10 +89,10 @@ void print_list(const struct Node *head) {
   printf("NULL\n");
 }
 
-void destroy_list(struct Node *head) {
-  while (head != NULL) {
-    struct Node *next = head->next;
-    free(head);
-    next = head;
+void clear_list(struct Node **head) {
+  while (*head != NULL) {
+    struct Node *next = (*head)->next;
+    free(*head);
+    *head = next;
   }
 }
