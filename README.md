@@ -14,9 +14,7 @@ The main concepts covered are:
 4. Memory bugs
 5. Dynamic data structures
 6. Function pointers
-7. Struct, pointers & ownership
-8. Advanced memory management
-9. Projects
+7. Advanced dynamic structures
 
 ---
 
